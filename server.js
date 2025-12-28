@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
-const port = process.env.PORT || 8080;
+
+const port = 8080; // Fixed port for ngrok
 
 const wss = new WebSocket.Server({ port });
 
@@ -7,7 +8,7 @@ wss.on('connection', (ws) => {
   console.log('New client connected');
 
   ws.on('message', (message) => {
-    // Broadcast to ALL connected clients (your monitor pages)
+    // Broadcast to all connected monitors
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
@@ -15,7 +16,10 @@ wss.on('connection', (ws) => {
     });
   });
 
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
 });
 
 console.log(`WebSocket server running on port ${port}`);
+console.log('Waiting for connections...');
